@@ -3,11 +3,14 @@ import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { listOrders, getStatusValues, updateOrderStatus } from './apiAdmin';
 import moment from 'moment';
+import { useHistory } from 'react-router-dom'; // Import useHistory hook
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [statusValues, setStatusValues] = useState([]);
+  const [successMessage, setSuccessMessage] = useState('');
   const { user, token } = isAuthenticated();
+  const history = useHistory(); // Initialize useHistory hook
 
   const loadOrders = () => {
     listOrders(user._id, token).then((data) => {
@@ -58,10 +61,14 @@ const Orders = () => {
       if (data.error) {
         console.log('Status update failed');
       } else {
-        loadOrders();
+        // Redirect to view order page after updating status
+        setSuccessMessage('Order status updated successfully ✓');
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+        loadOrders(); // Reload orders after redirecting
       }
     });
-    // console.log('update order status');
   };
 
   const showStatus = (o) => (
@@ -84,7 +91,7 @@ const Orders = () => {
   return (
     <Layout
       title='Orders'
-      description={`Hey ${user.name}, you can manage all the ordes here`}
+      description={`Hey ${user.name}, you can manage all the orders here`}
     >
       <div className='row'>
         <div className='col-md-8 offset-md-2'>
@@ -135,6 +142,9 @@ const Orders = () => {
               </div>
             );
           })}
+          {successMessage && (
+            <div className='alert alert-success'>{successMessage}</div>
+          )}
         </div>
       </div>
     </Layout>

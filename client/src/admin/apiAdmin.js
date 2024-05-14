@@ -81,7 +81,7 @@ export const updateOrderStatus = (userId, token, orderId, status) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ status, orderId }),
+    body: JSON.stringify({ status }),
   })
     .then((response) => {
       return response.json();
